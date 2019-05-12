@@ -17,33 +17,63 @@
  */
 package Network;
 
+import BridgePattern.ICanvasDevice;
+import BridgePattern.ISoundDevice;
+import EvilCraft.GameEngine;
+import EvilCraft.Map;
+import EvilCraft.Sprite;
+import EvilCraft.StaticObject;
 import EvilCraft.Team;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author csc190
  */
-public class ClientEngine {
+public class ClientEngine extends GameEngine{
     
     Connection connection;
+    private boolean gameReady;
     
-    public ClientEngine(Connection connection){
+    public ClientEngine(String mapPath, ICanvasDevice mainview, ICanvasDevice minimap, ICanvasDevice factoryPanel, ISoundDevice sound, Connection connection) {
+        super(mapPath, mainview, minimap, factoryPanel, sound);
         this.connection = connection;
-        update();
+        gameReady =false;
     }
     
-    private void update(){
-        while(true){
-            try{
-                TimeUnit.SECONDS.sleep(10);
-            }
-            catch(InterruptedException e){
-                System.out.println("Yo no fue");
-            }
-            connection.echoPrint();
-            
-        }
+    @Override
+    public void init(){
+            this.connection.connect();
+            this.connection.setClientEngine(this);
+    }
+    
+    public void initGame(){
+        gameReady=true;
+        this.map = new Map(mapPath, mainview);
+    }
+    
+    @Override
+    public void onTick(){
+        if(!gameReady)return;
+        //System.out.println(arrMapTiles.size());
+        
+        mainview.clear();
+        minimap.clear();
+        
+        
+        arrMapTiles.stream().forEach(elem -> drawSprite(elem));
+    }
+    
+    private void drawSprite(Sprite s){
+        s.drawOnMainView(this.mainview);
+        s.drawOnMiniMap(this.minimap);
+    }
+    
+    public void changeArrStatic(ArrayList<StaticObject> arr){
+        this.arrMapTiles.clear();
+        this.arrMapTiles =arr;
+        
     }
     
 }

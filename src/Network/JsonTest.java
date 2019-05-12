@@ -21,23 +21,19 @@ package Network;
  *
  * @author csc190
  */
-public class RefStrings {
+public class JsonTest {
     
-    public static final String SERVER_IP = "localhost";
+    private final String name;
+    private final String last;
     
-    public static final int DATA_PORT =5656;
-    public static final int ECHO_PORT = 5657;
+    public JsonTest(String name, String last){
+        this.name=name;
+        this.last=last;
+    }
     
-    public static final String CMD_DEREGISTERPLAYER = "&j3D";
-    public static final String CMD_UPDATEPOSITION = "pG4*";
-    public static final String CMD_UPDATEPROJ = "kjP#";
-    public static final String CMD_REGISTERPLAYER= "jg(#";
-    
-    public static final String CMD_UPDATESPRITES = ";lT9";
-    public static final String CMD_MADRE = "tu puta madre";
-    
-    public static final String CMD_STARTMAP = "-,>2";
-
-
+    @Override
+    public String toString(){
+        return name + " " + last;
+    }
     
 }

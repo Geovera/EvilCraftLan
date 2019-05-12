@@ -22,14 +22,20 @@ import java.util.ArrayList;
 
 public class Tank extends ArmyUnit {
 
-    protected int body_degree = 0;
     protected int gun_degree = 0;
-    String body_pic;
-    String gun_pic;
+    transient String body_pic;
+    transient String gun_pic;
 
     public Tank(Team team, int x, int y, int w, int h) {
         super(team, x, y, w, h, 300, 0, 2);
         String team_name = team == GameEngine.getInstance().getPlayerTeam() ? "team_red" : "team_yellow";
+        body_pic = "resources/images/" + team_name + "/tank/body.png";
+        gun_pic = "resources/images/" + team_name + "/tank/gun.png";
+        int k = 0;
+    }
+    public Tank(Team team, int x, int y, int w, int h, int nose) {
+        super(team, x, y, w, h, 300, 0, 2);
+        String team_name = team.getName() == "HUMAN" ? "team_red" : "team_yellow";
         body_pic = "resources/images/" + team_name + "/tank/body.png";
         gun_pic = "resources/images/" + team_name + "/tank/gun.png";
         int k = 0;
@@ -39,7 +45,7 @@ public class Tank extends ArmyUnit {
     @Override
     public void drawOnMainView(ICanvasDevice mainview) {
         if (this.idx_explode == -1) {
-            mainview.drawImg(body_pic, this.getX(), this.getY(), this.getW(), this.getH(), body_degree);
+            mainview.drawImg(body_pic, this.getX(), this.getY(), this.getW(), this.getH(), degree);
             mainview.drawImg(gun_pic, this.getX(), this.getY(), this.getW(), this.getH(), gun_degree);
         } else {
             if (this.pic != null) {
@@ -63,24 +69,24 @@ public class Tank extends ArmyUnit {
 
     @Override
     public boolean isFacing(Point pt) {
-        return this.defaultIsFacing(body_degree, pt);
+        return this.defaultIsFacing(degree, pt);
     }
 
     @Override
     public void adjustBodyHeading(Point pt) {
         float targetDegree = this.getAngle(new Point(this.getX(), this.getY()), pt);
         int iTargetDegree = (int) targetDegree;
-        int diff = (iTargetDegree-this.body_degree+360)%360;
+        int diff = (iTargetDegree-this.degree+360)%360;
         if (diff > 180) {
             //turn left
             diff = diff - 180;
             int offset = diff < 10 ? diff : 10;
-            this.body_degree -= offset;
+            this.degree -= offset;
         } else {
             int offset = diff < 10 ? diff : 10;
-            this.body_degree += offset;
+            this.degree += offset;
         }
-        this.body_degree = (this.body_degree+360)%360;
+        this.degree = (this.degree+360)%360;
     }
 
     @Override

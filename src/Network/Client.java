@@ -18,7 +18,9 @@
 package Network;
 
 import EvilCraft.Team;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
@@ -33,13 +35,13 @@ public class Client {
     public Socket dataSocket;
     public Socket echoSocket;
     
-    public Scanner dataIn;
-    public PrintWriter dataOut;
+    public BufferedReader dataIn;
+    public OutputStreamWriter dataOut;
     
-    public Scanner echoIn;
-    public PrintWriter echoOut;
+    public BufferedReader echoIn;
+    public OutputStreamWriter echoOut;
     
-    public Client(Socket dataSocket, Socket echoSocket, PrintWriter dataOut, Scanner dataIn, PrintWriter echoOut, Scanner echoIn){
+    public Client(Socket dataSocket, Socket echoSocket, OutputStreamWriter dataOut, BufferedReader dataIn, OutputStreamWriter echoOut, BufferedReader echoIn){
         this.dataSocket = dataSocket;
         this.echoSocket = echoSocket;
         this.dataOut = dataOut;

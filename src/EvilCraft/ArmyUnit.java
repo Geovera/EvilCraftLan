@@ -27,8 +27,6 @@ import java.util.ArrayList;
  */
 public abstract class ArmyUnit extends Sprite {
 
-    protected SpriteInfo attackGoal = null;
-    protected Point navigationGoal = null;
     private int coolTicksNeeded = 0;
 
     public ArmyUnit(Team team, int x, int y, int w, int h, int lifepoints, int altitude, int block_score) {

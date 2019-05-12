@@ -30,12 +30,12 @@ public abstract class Sprite {
 
     //------- DATA MEMBERS ----------
     protected int x, y, w, h;
-    private int altitude, blocking_score;
+    private transient int altitude, blocking_score;
     protected Team team;
-    protected boolean bDead = false;
-    protected String attackGoal = null;
-    protected Point navigationGoal = null;
-    private int lifepoints;
+    protected transient boolean bDead = false;
+    protected transient SpriteInfo attackGoal = null;
+    protected transient Point navigationGoal = null;
+    private transient int lifepoints;
     private String id;
     protected int degree;
     protected String pic = null;
@@ -80,7 +80,7 @@ public abstract class Sprite {
      *
      * @param sp
      */
-    public void setAttackGoal(String sp) {
+    public void setAttackGoal(SpriteInfo sp) {
         this.attackGoal = sp;
     }
 
@@ -118,6 +118,11 @@ public abstract class Sprite {
                 this.setPos(pt.x, pt.y);
             }
         }
+    }
+    
+    @Override
+    public String toString(){
+        return team.getName() + "X: " + x;
     }
 
     public Sprite(Team team, int x, int y, int w, int h, int lifepoints, int altitude, int block_score){

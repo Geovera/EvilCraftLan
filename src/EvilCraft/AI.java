@@ -68,7 +68,7 @@ public class AI {
             Sprite sp = this.team.getSprites().get(i);
             SpriteInfo target = arrEnemy.get(nxtTarget);
             sp.setNavigationGoal(new Point(target.x, target.y));
-            sp.setAttackGoal(target.id);
+            sp.setAttackGoal(target);
             nxtTarget = (nxtTarget+1)%arrEnemy.size();
         }
         
@@ -77,7 +77,7 @@ public class AI {
         for(int i=half; i<this.team.getSprites().size(); i++){
             Sprite sp = this.team.getSprites().get(i);
             sp.setNavigationGoal(new Point(ebase.x, ebase.y));
-            sp.setAttackGoal(ebase.id);
+            sp.setAttackGoal(ebase);
         }
     
 }

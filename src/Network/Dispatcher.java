@@ -17,9 +17,13 @@
  */
 package Network;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
@@ -31,11 +35,11 @@ public class Dispatcher implements Runnable{
     private Socket dataSocket;
     private Socket echoSocket;
     
-    private Scanner dataIn;
-    private PrintWriter dataOut;
+    private BufferedReader dataIn;
+    private OutputStreamWriter dataOut;
     
-    private Scanner echoIn;
-    private PrintWriter echoOut;
+    private BufferedReader echoIn;
+    private OutputStreamWriter echoOut;
     
     private Client client;
 
@@ -67,11 +71,11 @@ public class Dispatcher implements Runnable{
             dataSocket = ServerEngine.dataServerSocket.accept();
             echoSocket = ServerEngine.echoServerSocket.accept();
             
-            dataOut = new PrintWriter(dataSocket.getOutputStream());
-            dataIn = new Scanner(dataSocket.getInputStream());
+            dataOut = new OutputStreamWriter(dataSocket.getOutputStream(), StandardCharsets.UTF_8);
+            dataIn = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
             
-            echoOut = new PrintWriter(echoSocket.getOutputStream());
-            echoIn = new Scanner(echoSocket.getInputStream());
+            echoOut = new OutputStreamWriter(echoSocket.getOutputStream(), StandardCharsets.UTF_8);
+            echoIn = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
             
             client = new Client(dataSocket, echoSocket, dataOut, dataIn, echoOut, echoIn);
             return true;

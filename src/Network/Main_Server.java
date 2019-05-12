@@ -41,7 +41,7 @@ import javafx.stage.Stage;
  *
  * @author csc190
  */
-public class Main_Client extends Application{
+public class Main_Server extends Application{
 
     
     protected AnimationTimer animTimer = null;
@@ -108,15 +108,13 @@ public class Main_Client extends Application{
         vboxTestButtons.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         FXCanvasDevice fxMainView = new FXCanvasDevice(canvasMainView);
         FXSoundDevice fxSound = new FXSoundDevice();
-        ClientEngine g10 = new ClientEngine("resources/map/small.txt", fxMainView, fxMiniMap, fxFactoryPanel, fxSound, new Connection());
-        createButton("JoinGame", g10, vboxTestButtons);
+        ServerEngine g10 = new ServerEngine("resources/map/small.txt", fxMainView, fxMiniMap, fxFactoryPanel, fxSound);
+        createButton("StartServer", g10, vboxTestButtons);
         
         HBox hbox = new HBox();
 
-        hbox.getChildren().add(canvasMainView);
-        hbox.getChildren().add(vboxRight);
         hbox.getChildren().add(vboxTestButtons);
-        Scene scene = new Scene(hbox, 1400, 1000);
+        Scene scene = new Scene(hbox, 200, 200);
 
         primaryStage.setTitle("EvilCraft Milestone LAN");
         primaryStage.setScene(scene);

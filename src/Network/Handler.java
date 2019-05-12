@@ -17,7 +17,18 @@
  */
 package Network;
 
+import EvilCraft.Sprite;
+import EvilCraft.StaticObject;
+import EvilCraft.Tank;
 import EvilCraft.Team;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -26,6 +37,10 @@ import EvilCraft.Team;
 class Handler {
     
     private Client client;
+    static Gson gson = new GsonBuilder().serializeNulls().registerTypeAdapter(Sprite.class, new InterfaceAdapter()).create();
+    static Type listOfSprite = new TypeToken<List<Sprite>>(){}.getType();
+    static Type listOfStatic = new TypeToken<List<StaticObject>>(){}.getType();
+
     
     public Handler(Client client){
         this.client=client;
@@ -44,7 +59,7 @@ class Handler {
     private void handleUpdate(){
         try{
             while(true){
-                String cmd = client.dataIn.nextLine();        
+                String cmd = client.dataIn.readLine();        
                 if(cmd.equals(RefStrings.CMD_MADRE)){
                     System.out.println(cmd);
                 }
@@ -56,9 +71,14 @@ class Handler {
     }
     
     public boolean register(){
-        String num = client.dataIn.nextLine();
-        Team team;
+
+        try{
+        String num = client.dataIn.readLine();
+
+        }catch(Exception e){System.out.println("Fuck you");
+        e.printStackTrace();}
         
+        Team team;
         if(!ServerEngine.firstPlayer){
             team = new Team(10000, "Human");
             ServerEngine.firstPlayer=true;
@@ -67,14 +87,19 @@ class Handler {
             team = new Team(10000, "Persona");
         
         client.team = team;
+
         ServerEngine.registerPlayer(client);
         
-        for(Client other : ServerEngine.clients){
-            if(!other.team.getName().equals(client.team.getName()))
-            {
-                other.echoOut.println(RefStrings.CMD_REGISTERPLAYER);
-                other.echoOut.flush();
+        try{
+            for(Client other : ServerEngine.clients){
+                if(!other.team.getName().equals(client.team.getName()))
+                {
+                    other.echoOut.write(RefStrings.CMD_REGISTERPLAYER + "\r\n");
+                    other.echoOut.flush();
+                }
             }
+        }catch(Exception e){
+            System.out.println("Couldn't post players");
         }
         
         return true;
@@ -84,7 +109,9 @@ class Handler {
         try{
             for(Client other : ServerEngine.clients){
                 if(!other.team.getName().equals(client.team.getName())){
-                    other.echoOut.println("Se fue a la mrd" + client.team.getName());
+                    other.echoOut.write(RefStrings.CMD_DEREGISTERPLAYER+ "\r\n");
+                    other.echoOut.write("Se fue a la mrd: " + client.team.getName()+"\r\n");
+                    other.echoOut.flush();
                 }
             }
             client.close();
@@ -94,6 +121,32 @@ class Handler {
             System.out.println(client.team.getName() +" has disconnected");
             
             ServerEngine.deregisterPlayer(client);
+        }
+    }
+    
+    public static void echoMap(ArrayList<StaticObject> map){
+        try{
+            String json =gson.toJson(map, listOfStatic) + "\r\n";
+            System.out.println(json);
+            for(Client cl : ServerEngine.clients){
+                cl.echoOut.write(RefStrings.CMD_STARTMAP + "\r\n");
+                cl.echoOut.write(json);
+                cl.echoOut.flush();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    public static void updateSprites(){
+        try{
+            
+            for(Client cl : ServerEngine.clients){
+                cl.echoOut.write(RefStrings.CMD_UPDATESPRITES + "\r\n");     
+                cl.echoOut.flush();
+            }
+        }catch(Exception e){
+            System.out.println("Couldn't update sprites");
         }
     }
     

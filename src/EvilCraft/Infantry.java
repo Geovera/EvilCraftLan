@@ -33,8 +33,9 @@ public class Infantry extends ArmyUnit {
 
         };
     }
-
-    int ticks = 0;
+    public Infantry(Team team, int x, int y, int w, int h, int nose) {
+        super(team, x, y, w, h, 20, 0, 0);
+    }
 
     @Override
     public void update() {

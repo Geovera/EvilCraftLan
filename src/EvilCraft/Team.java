@@ -25,10 +25,10 @@ import java.util.ArrayList;
  */
 public class Team {
     // ---- DATA MEMBERS ---------
-    protected int cash;
+    protected transient int cash;
     protected String name;
-    protected Base base;
-    protected ArrayList<Sprite> arrSprites = new ArrayList<Sprite>();
+    protected transient Base base;
+    protected transient ArrayList<Sprite> arrSprites = new ArrayList<Sprite>();
     // ---- OPERATIONS
     public Team(int cash, String name){
         this.cash = cash;

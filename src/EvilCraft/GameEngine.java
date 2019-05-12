@@ -73,11 +73,7 @@ public class GameEngine implements IGameEngine {
         this.minimap = minimap;
         this.buttonCanvas = factoryPanel;
         this.soundDevice = soundDevice;
-        Team team1 = new Team(10000, "Human");
-        Team team2 = new Team(10000, "AI");
-        this.arrTeams.add(team1);
-        this.arrTeams.add(team2);
-        this.loadGameMap(mapPath);
+        //this.loadGameMap(mapPath);
         this.mouseSprite = new MouseSprite(this.mainview, this.minimap);
         
         
@@ -102,6 +98,7 @@ public class GameEngine implements IGameEngine {
     public void init() {
         //DON'T KILL THE following line
         //set up the ButtonController
+        loadGameMap(this.mapPath);
         humanController = new ButtonController(this.arrTeams.get(0), this.buttonCanvas);
         this.mainview.setupEventHandler(this);
         //set up the ButtonController        
@@ -113,8 +110,8 @@ public class GameEngine implements IGameEngine {
         this.createBackground();
         ge_instance  = this;
         
-        Team t1 = new Team(50000, "Player");
-        Team t2 = new Team(50000, "Computer");
+        Team t1 = new Team(10000, "Human");
+        Team t2 = new Team(10000, "AI");
         this.arrTeams.add(t1);
         this.arrTeams.add(t2);
     }
@@ -175,7 +172,7 @@ public class GameEngine implements IGameEngine {
         if(this.arrSelected!=null && this.arrSelected.size()>0){
             for(Sprite sprite: this.arrSelected){
                 sprite.setNavigationGoal(pt);
-                sprite.setAttackGoal(target.getID());
+                sprite.setAttackGoal(target.getSpriteInfo());
             }
         }
         this.mouseSprite.handleEvnet(MouseEvent.RightClick, canvas, x, y, this.arrSelected);        

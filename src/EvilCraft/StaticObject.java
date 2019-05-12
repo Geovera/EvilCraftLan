@@ -25,13 +25,19 @@ import BridgePattern.ICanvasDevice;
  */
 
 public class StaticObject extends Sprite {
-    protected String tile;
-    protected String path;
+    protected transient String tile;
+    protected transient String path;
 
     public StaticObject(Team team, int x, int y, int w, int h, String maptile, int lifepoints) {
         super(team, x, y, w, h, lifepoints, 0, 0);
         this.tile = maptile;
         this.path = "resources/images/common/" + maptile + ".png";
+        this.pic = this.path;
+    }
+    
+    public StaticObject(Team team, int x, int y, int w, int h, String pic){
+        super(team, x, y, w, h, 1, 0,0);
+        this.pic = pic;
     }
 
     @Override
@@ -41,7 +47,7 @@ public class StaticObject extends Sprite {
 
     @Override
     public void drawOnMainView(ICanvasDevice mainview) {
-        mainview.drawImg(this.path,this.getX(), this.getY(), this.getW(), this.getH(), 0);
+        mainview.drawImg(this.pic,this.getX(), this.getY(), this.getW(), this.getH(), 0);
     }
 
     @Override
