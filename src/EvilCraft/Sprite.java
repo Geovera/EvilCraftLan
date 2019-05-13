@@ -18,6 +18,8 @@
 package EvilCraft;
 
 import BridgePattern.ICanvasDevice;
+import Network.ClientEngine;
+import Network.ServerEngine;
 import java.util.Random;
 
 /**
@@ -316,6 +318,9 @@ public abstract class Sprite {
         
         if(idx_explode==arrExplosion.length-1){
             this.setDead();
+            GameEngine ge = GameEngine.getInstance();
+            if(ge instanceof ServerEngine)((ServerEngine)ge).removeSprite(this);
+            //if(this instanceof Tank);
             return;
         }
         

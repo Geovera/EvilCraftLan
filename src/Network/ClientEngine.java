@@ -35,6 +35,7 @@ public class ClientEngine extends GameEngine{
     
     Connection connection;
     private boolean gameReady;
+    private boolean spritesReady;
     
     public ClientEngine(String mapPath, ICanvasDevice mainview, ICanvasDevice minimap, ICanvasDevice factoryPanel, ISoundDevice sound, Connection connection) {
         super(mapPath, mainview, minimap, factoryPanel, sound);
@@ -58,11 +59,16 @@ public class ClientEngine extends GameEngine{
         if(!gameReady)return;
         //System.out.println(arrMapTiles.size());
         
+        
+        
+        if(!spritesReady) return;
         mainview.clear();
         minimap.clear();
-        
-        
         arrMapTiles.stream().forEach(elem -> drawSprite(elem));
+        
+        arrSprites.stream().forEach(elem -> drawSprite(elem));
+        
+        spritesReady=false;
     }
     
     private void drawSprite(Sprite s){
@@ -73,6 +79,14 @@ public class ClientEngine extends GameEngine{
     public void changeArrStatic(ArrayList<StaticObject> arr){
         this.arrMapTiles.clear();
         this.arrMapTiles =arr;
+        
+    }
+    public void changeArrSprite(ArrayList<Sprite> arr){
+        if(!spritesReady){
+            this.arrSprites.clear();
+            this.arrSprites =arr;
+            spritesReady=true;
+        }
         
     }
     

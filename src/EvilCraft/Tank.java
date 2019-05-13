@@ -24,33 +24,33 @@ public class Tank extends ArmyUnit {
 
     protected int gun_degree = 0;
     transient String body_pic;
-    transient String gun_pic;
+    String gun_pic;
 
     public Tank(Team team, int x, int y, int w, int h) {
         super(team, x, y, w, h, 300, 0, 2);
         String team_name = team == GameEngine.getInstance().getPlayerTeam() ? "team_red" : "team_yellow";
-        body_pic = "resources/images/" + team_name + "/tank/body.png";
+        this.pic = "resources/images/" + team_name + "/tank/body.png";
         gun_pic = "resources/images/" + team_name + "/tank/gun.png";
         int k = 0;
     }
-    public Tank(Team team, int x, int y, int w, int h, int nose) {
-        super(team, x, y, w, h, 300, 0, 2);
-        String team_name = team.getName() == "HUMAN" ? "team_red" : "team_yellow";
-        body_pic = "resources/images/" + team_name + "/tank/body.png";
-        gun_pic = "resources/images/" + team_name + "/tank/gun.png";
+    public Tank(Team team, int x, int y, int w, int h, String pic, String gun_pic, int degree, int gun_degree) {
+        super(team, x, y, w, h, 300, degree, 2);
+        this.pic = pic;
+        this.gun_pic = gun_pic;
+        this.gun_degree=gun_degree;
         int k = 0;
+        this.idx_explode=-1;
     }
 
 
     @Override
     public void drawOnMainView(ICanvasDevice mainview) {
-        if (this.idx_explode == -1) {
-            mainview.drawImg(body_pic, this.getX(), this.getY(), this.getW(), this.getH(), degree);
+        //System.out.println(this.pic);
+        if (this.pic != null && this.idx_explode==-1) {
+            //System.out.println(this.pic);
+            mainview.drawImg(this.pic, this.getX(), this.getY(), this.getW(), this.getH(), degree);
             mainview.drawImg(gun_pic, this.getX(), this.getY(), this.getW(), this.getH(), gun_degree);
-        } else {
-            if (this.pic != null) {
-                mainview.drawImg(this.pic, this.getX(), this.getY(), this.getW(), this.getH(), 0);
-            }
+            
         }
     }
 

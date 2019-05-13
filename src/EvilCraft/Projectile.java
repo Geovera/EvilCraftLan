@@ -32,7 +32,6 @@ public abstract class Projectile extends Sprite{
    
     protected int offX = 0;
     protected int offY = 0;
-    protected int degree = 0;
     protected int travel_tick = 0;
     
     

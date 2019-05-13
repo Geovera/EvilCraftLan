@@ -98,6 +98,10 @@ public class GameEngine implements IGameEngine {
     public void init() {
         //DON'T KILL THE following line
         //set up the ButtonController
+        Team t1 = new Team(10000, "Human");
+        Team t2 = new Team(10000, "AI");
+        this.arrTeams.add(t1);
+        this.arrTeams.add(t2);
         loadGameMap(this.mapPath);
         humanController = new ButtonController(this.arrTeams.get(0), this.buttonCanvas);
         this.mainview.setupEventHandler(this);
@@ -110,10 +114,7 @@ public class GameEngine implements IGameEngine {
         this.createBackground();
         ge_instance  = this;
         
-        Team t1 = new Team(10000, "Human");
-        Team t2 = new Team(10000, "AI");
-        this.arrTeams.add(t1);
-        this.arrTeams.add(t2);
+        
     }
 
     @Override

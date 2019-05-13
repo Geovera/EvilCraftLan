@@ -19,8 +19,11 @@ package Network;
 
 import BridgePattern.ICanvasDevice;
 import BridgePattern.ISoundDevice;
+import EvilCraft.ArmyUnit;
 import EvilCraft.GameEngine;
+import EvilCraft.Point;
 import EvilCraft.Sprite;
+import EvilCraft.Tank;
 import EvilCraft.Team;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -78,6 +81,18 @@ public class ServerEngine extends GameEngine{
         loadGameMap(this.mapPath);
         gameReady =true;
         Handler.echoMap(arrMapTiles);
+        
+        Team human1 = this.getPlayerTeam();
+        Team human2 = this.getAITeam();
+        
+        Sprite tank1 = new Tank(human1,100,100,50,50);
+        Sprite tank2 = new Tank(human2,200,200,50,50);
+        human1.addSprite(tank1);
+        human2.addSprite(tank2);
+        //tank1.setNavigationGoal(new Point(500,500));
+        //tank1.setAttackGoal(tank2.getSpriteInfo());
+        this.addSprite(tank1);
+        this.addSprite(tank2);
     }
     
     @Override
@@ -85,7 +100,7 @@ public class ServerEngine extends GameEngine{
         if(!gameReady)
             return;
         
-        arrSprites.stream().forEach(elem -> elem.update());
+        arrSprites.stream().forEach(elem -> updateSprite(elem));
         
         for(Sprite s : delSpr){
             arrSprites.remove(s);
@@ -93,8 +108,17 @@ public class ServerEngine extends GameEngine{
         for(Sprite s : addSpr){
             arrSprites.add(s);
         }
+        delSpr.clear();
+        addSpr.clear();
         
-        Handler.updateSprites();
+        Handler.updateSprites(this.arrSprites);
+    }
+    
+    private void updateSprite(Sprite s){
+        if (s instanceof ArmyUnit) {
+                ((ArmyUnit) s).setFireAction();
+            }
+            s.update();
     }
     
     @Override
@@ -153,6 +177,9 @@ public class ServerEngine extends GameEngine{
     }
     public static void deregisterPlayer(Client client){
         clients.remove(client);
+        if(clients.size()<2){
+            ServerEngine.getServerInstance().gameReady=false;
+        }
     }
 
     

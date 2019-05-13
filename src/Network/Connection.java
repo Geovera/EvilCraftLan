@@ -48,9 +48,7 @@ public class Connection {
 
     public boolean connectionStatus;
     private ClientEngine ce;
-    Gson gson = new GsonBuilder().serializeNulls().registerTypeAdapter(Sprite.class, new InterfaceAdapter()).create();
-    Type listOfSprite = new TypeToken<List<Sprite>>(){}.getType();
-    Type listOfStatic = new TypeToken<List<StaticObject>>(){}.getType();
+    static ArrayJsonConverter converter = new ArrayJsonConverter();
 
     public void setClientEngine(ClientEngine ce){
         this.ce = ce;
@@ -120,16 +118,21 @@ public class Connection {
                     while (true) {
                         String cmd = client.echoIn.readLine();
                         if (cmd.equals(RefStrings.CMD_UPDATESPRITES)) {
-                            //System.out.print("Funciona casi");
+                            String json = (client.echoIn.readLine().toString());
+                            try{
+                            ArrayList<Sprite> jt = converter.convertToString(json, ArrayJsonConverter.ArrayType.SPRITE);
+                            ce.changeArrSprite(jt);
+                            }catch(Exception e){}
+                            
                         } else if (cmd.equals(RefStrings.CMD_REGISTERPLAYER)) {
                             System.out.println("Un boludo entro!");
                         }else if (cmd.equals(RefStrings.CMD_DEREGISTERPLAYER)){
                             System.out.println(client.echoIn.readLine());
                         }else if(cmd.equals(RefStrings.CMD_STARTMAP)){
-                            System.out.println("yes");
+                            //System.out.println("yes");
                             String json = (client.echoIn.readLine().toString());
                             //System.out.println(json);
-                            ArrayList<StaticObject> jt = gson.fromJson(json, listOfStatic);
+                            ArrayList<StaticObject> jt = converter.convertToString(json, ArrayJsonConverter.ArrayType.STATIC);
                             ce.changeArrStatic(jt);
                             ce.initGame();
                             

@@ -32,6 +32,12 @@ public class Shell extends Projectile{
         this.setTravel(15);
          this.pic = "resources/images/common/shell.png";
     }
+    
+    public Shell(Team team, int x, int y, int w, int h, int degrees, String pic){
+        super(team,x,y,w,h,1,1000,0,0,0);
+        this.setTravel(15);
+        this.pic = pic;
+    }
 
     @Override
     public void drawOnMainView(ICanvasDevice mainview) {

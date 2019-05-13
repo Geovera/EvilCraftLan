@@ -37,9 +37,7 @@ import java.util.List;
 class Handler {
     
     private Client client;
-    static Gson gson = new GsonBuilder().serializeNulls().registerTypeAdapter(Sprite.class, new InterfaceAdapter()).create();
-    static Type listOfSprite = new TypeToken<List<Sprite>>(){}.getType();
-    static Type listOfStatic = new TypeToken<List<StaticObject>>(){}.getType();
+    static ArrayJsonConverter converter = new ArrayJsonConverter();
 
     
     public Handler(Client client){
@@ -126,11 +124,11 @@ class Handler {
     
     public static void echoMap(ArrayList<StaticObject> map){
         try{
-            String json =gson.toJson(map, listOfStatic) + "\r\n";
+            String json =converter.convertToJson(map, ArrayJsonConverter.ArrayType.STATIC);
             System.out.println(json);
             for(Client cl : ServerEngine.clients){
                 cl.echoOut.write(RefStrings.CMD_STARTMAP + "\r\n");
-                cl.echoOut.write(json);
+                cl.echoOut.write(json+"\r\n");
                 cl.echoOut.flush();
             }
         }catch(Exception e){
@@ -138,16 +136,20 @@ class Handler {
         }
     }
     
-    public static void updateSprites(){
+    public static void updateSprites(ArrayList<Sprite> arrSprite){
         try{
-            
+            String json =converter.convertToJson(arrSprite, ArrayJsonConverter.ArrayType.SPRITE);
+            //System.out.println(json);
             for(Client cl : ServerEngine.clients){
-                cl.echoOut.write(RefStrings.CMD_UPDATESPRITES + "\r\n");     
+                cl.echoOut.write(RefStrings.CMD_UPDATESPRITES + "\r\n");
+                cl.echoOut.write(json+"\r\n");
                 cl.echoOut.flush();
             }
         }catch(Exception e){
-            System.out.println("Couldn't update sprites");
+            e.printStackTrace();
+            System.exit(1);
         }
     }
+    
     
 }
