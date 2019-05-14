@@ -104,7 +104,6 @@ public class GameEngine implements IGameEngine {
         this.arrTeams.add(t2);
         loadGameMap(this.mapPath);
         humanController = new ButtonController(this.arrTeams.get(0), this.buttonCanvas);
-        this.mainview.setupEventHandler(this);
         //set up the ButtonController        
         this.mainview.setupEventHandler(this);
         this.minimap.setupEventHandler(this);
@@ -164,11 +163,10 @@ public class GameEngine implements IGameEngine {
     @Override
     public void onRightClick(ICanvasDevice canvas, int x, int y) {
 
-
         Point pt = this.getGlobalCoordinates(canvas, x, y, map);
         Point pt1 = new Point(pt.x-25, pt.y-25);
         Point pt2 = new Point(pt.x+25, pt.y+25);
-        ArrayList<Sprite> targets = this.getArrSprites(pt1, pt2, this.getAITeam());
+        ArrayList<Sprite> targets = this.getArrSprites(pt1, pt2, this.getAITeam(), true);
         Sprite target = targets==null || targets.size()==0? null: targets.get(0);
         if(this.arrSelected!=null && this.arrSelected.size()>0){
             for(Sprite sprite: this.arrSelected){
@@ -203,7 +201,7 @@ public class GameEngine implements IGameEngine {
     public void onRegionSelected(ICanvasDevice canvas, int x1, int y1, int x2, int y2) {
         Point pt1 = this.getGlobalCoordinates(canvas, x1, y1, map);
         Point pt2 = this.getGlobalCoordinates(canvas, x2, y2, map);
-        this.arrSelected = this.getArrSprites(pt1, pt2, this.getPlayerTeam());
+        this.arrSelected = this.getArrSprites(pt1, pt2, this.getPlayerTeam(),true);
 
     }
     
@@ -226,7 +224,7 @@ public class GameEngine implements IGameEngine {
                     this.getAITeam().setBase((Base)so);
                 }
                 if(so!=null)
-                    this.arrMapTiles.add(so);
+                    this.arrSprites.add(so);
             }
         }
     }
@@ -358,23 +356,31 @@ public class GameEngine implements IGameEngine {
      * @param team
      * @return 
      */
-    public ArrayList<Sprite> getArrSprites(Point pt1, Point pt2, Team team){
+    public ArrayList<Sprite> getArrSprites(Point pt1, Point pt2, Team team, boolean own){
          //slow version
          
          ArrayList<Sprite> ret = new ArrayList<Sprite>();
          for(int i=0; i<this.arrSprites.size(); i++){
              Sprite s = arrSprites.get(i);
-             if(isCollide(pt1.x, pt1.y, pt2.x-pt1.x, pt2.y-pt1.y, s.getX(), s.getY(), s.getW(), s.getH())){
-                 ret.add(s);
+             if(team==null || (own == s.getTeam().equals(team))){
+                //System.out.println("HOLA");
+                if(isCollide(pt1.x, pt1.y, pt2.x-pt1.x, pt2.y-pt1.y, s.getX(), s.getY(), s.getW(), s.getH())){
+                    ret.add(s);
+                }
              }
          }
+         /*Sprite base = own == team.equals(this.getPlayerTeam()) ? this.getPlayerTeam().getBase() : this.getAITeam().getBase();
+         //System.out.println(base.getTeam().getName());
+         if(isCollide(pt1.x, pt1.y, pt2.x-pt1.x, pt2.y-pt1.y, base.getX(), base.getY(), base.getW(), base.getH())){
+            ret.add(base);
+        }*/
          return ret;
     }
 
     @Override
     public void onMouseMoved(ICanvasDevice canvas, int x, int y) {
         Point pt = this.getGlobalCoordinates(canvas, x, y, map);
-        ArrayList<Sprite> arrSprites = this.getArrSprites(new Point(pt.x-25, pt.y-25), new Point(pt.x+25, pt.y+25), this.getAITeam());
+        ArrayList<Sprite> arrSprites = this.getArrSprites(new Point(pt.x-25, pt.y-25), new Point(pt.x+25, pt.y+25), this.getAITeam(),true);
         this.mouseSprite.handleEvnet(MouseEvent.MouseMove, canvas, x, y, this.arrSprites);
         
     }
@@ -424,7 +430,7 @@ public class GameEngine implements IGameEngine {
      * @return 
      */
     public boolean approveNextMove(Sprite proposer, Point lefttop_corner, int width, int height){
-        ArrayList<Sprite> arr = this.getArrSprites(lefttop_corner, new Point(lefttop_corner.x+width, lefttop_corner.y+height), null);
+        ArrayList<Sprite> arr = this.getArrSprites(lefttop_corner, new Point(lefttop_corner.x+width, lefttop_corner.y+height), null, false);
         for(Sprite sp: arr){
             if(sp!=proposer){
                 if(sp.getAltitude()==proposer.getAltitude()){
@@ -469,7 +475,7 @@ public class GameEngine implements IGameEngine {
         Point pt1 = new Point(projectile.getX() - range, projectile.getY() - range);
         Point pt2 = new Point(projectile.getX() + range, projectile.getY() + range);
         Team enemy = projectile.team == this.getAITeam() ? this.getPlayerTeam() : this.getAITeam();
-        ArrayList<Sprite> arr = this.getArrSprites(pt1, pt2, enemy);
+        ArrayList<Sprite> arr = this.getArrSprites(pt1, pt2, enemy, true);
         for (int i = 0; i < arr.size(); i++) {
             Sprite sp = arr.get(i);
             if(projectile instanceof Bomb){

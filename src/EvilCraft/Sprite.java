@@ -61,10 +61,9 @@ public abstract class Sprite {
 
     public void reduceLifepoints(int offset){
         lifepoints-=offset;
-        if(lifepoints<0) lifepoints=0;
-        if(lifepoints==0){
+        if(lifepoints<=0)
             this.startExplode();
-        }
+        
     }
 
     /**

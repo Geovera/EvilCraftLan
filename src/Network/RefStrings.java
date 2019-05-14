@@ -37,6 +37,12 @@ public class RefStrings {
     public static final String CMD_MADRE = "tu puta madre";
     
     public static final String CMD_STARTMAP = "-,>2";
+    
+    public static final String CMD_BUTTONCLICK = "5%>/";
+    public static final String CMD_PURCHASEACCEPTED = "1b&/";
+    public static final String CMD_REGION = "5%1d";
+    public static final String CMD_RIGHTCLICK = ")^m$";
+    public static final String CMD_GAMEFINISH = ";*/I";
 
 
     

@@ -18,15 +18,16 @@
 package EvilCraft;
 
 import BridgePattern.ICanvasDevice;
+import Network.Handler;
+import Network.ServerEngine;
 
 /**
- * Represents a button for creating units
-<<<<<<< HEAD
+ * Represents a button for creating units <<<<<<< HEAD
  *
  * @author csc190
  */
-
 public class ShopButton {
+
     //-------- DATA MEMBERS -------------
     public static final String TANK = "TANK";
     public static final String INFANTRY = "INFANTRY";
@@ -55,6 +56,9 @@ public class ShopButton {
         if (this.tickLeft == 0) {
             if (this.team.PurchaseSprite(this.unitName)) {
                 this.startTimer();
+                if (GameEngine.getInstance() instanceof ServerEngine) {
+                    Handler.purchaseAccept(this.team.getName(), this.unitName, this.team.getCash());
+                }
             };
 
         } else {//it's still in progress, do nothing
@@ -77,24 +81,27 @@ public class ShopButton {
     public void update() {
         if (this.tickLeft > 0) {
             this.tickLeft--;
-            if (this.tickLeft == 1) {
-                Base base = this.team.getBase();
-                Point pt = GameEngine.getInstance().getFreeSpace(base.getX(), base.getY(), 50, 50);
-                Sprite sprite = null;
-                if (this.unitName.equals(TANK)) {
-                    sprite = new Tank(team, pt.x, pt.y, 50, 50);
+            if (team != null) {
+                if (this.tickLeft == 1) {
+
+                    Base base = this.team.getBase();
+                    Point pt = GameEngine.getInstance().getFreeSpace(base.getX(), base.getY(), 50, 50);
+                    Sprite sprite = null;
+                    if (this.unitName.equals(TANK)) {
+                        sprite = new Tank(team, pt.x, pt.y, 50, 50);
+                    }
+                    if (this.unitName.equals(INFANTRY)) {
+                        sprite = new Infantry(team, pt.x, pt.y, 50, 50);
+                    }
+                    if (this.unitName.equals(PLANE)) {
+                        sprite = new Airplane(team, pt.x, pt.y, 50, 50);
+                    }
+                    if (sprite == null) {
+                        System.out.println("ERROR sprite is null!");
+                    }
+                    team.addSprite(sprite);
+                    GameEngine.getInstance().addSprite(sprite);
                 }
-                if (this.unitName.equals(INFANTRY)) {
-                    sprite = new Infantry(team, pt.x, pt.y, 50, 50);
-                }
-                if (this.unitName.equals(PLANE)) {
-                    sprite = new Airplane(team, pt.x, pt.y, 50, 50);
-                }
-                if (sprite == null) {
-                    System.out.println("ERROR sprite is null!");
-                }
-                team.addSprite(sprite);
-                GameEngine.getInstance().addSprite(sprite);
             }
         }
     }
@@ -106,7 +113,7 @@ public class ShopButton {
      */
     public void draw(ICanvasDevice canvas) {
         canvas.drawImg(picPath, x, y, w, h, 0);
-        int lineX = this.x + 200 - (int)((this.tickLeft*1.0/this.creationTime)*200);
-        canvas.drawLine(lineX, y, lineX, y+100);
+        int lineX = this.x + 200 - (int) ((this.tickLeft * 1.0 / this.creationTime) * 200);
+        canvas.drawLine(lineX, y, lineX, y + 100);
     }
 }

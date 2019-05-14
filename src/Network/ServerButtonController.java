@@ -17,23 +17,28 @@
  */
 package Network;
 
+import BridgePattern.ICanvasDevice;
+import EvilCraft.ButtonController;
+import EvilCraft.ShopButton;
+import EvilCraft.Team;
+
 /**
  *
  * @author csc190
  */
-public class JsonTest {
+public class ServerButtonController extends ButtonController {
     
-    private final String name;
-    private final String last;
-    
-    public JsonTest(String name, String last){
-        this.name=name;
-        this.last=last;
+    public ServerButtonController(Team team, ICanvasDevice canvas) {
+        super(team, canvas);
     }
     
     @Override
-    public String toString(){
-        return name + " " + last;
+    public void onTick() {
+
+        for(int i=0; i<this.arrButtons.size(); i++){
+            ShopButton btn = this.arrButtons.get(i);
+            btn.update();
+        }
     }
     
 }

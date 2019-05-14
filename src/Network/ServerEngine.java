@@ -19,8 +19,12 @@ package Network;
 
 import BridgePattern.ICanvasDevice;
 import BridgePattern.ISoundDevice;
+import EvilCraft.AI;
 import EvilCraft.ArmyUnit;
+import EvilCraft.ButtonController;
 import EvilCraft.GameEngine;
+import EvilCraft.MouseEvent;
+import EvilCraft.MouseSprite;
 import EvilCraft.Point;
 import EvilCraft.Sprite;
 import EvilCraft.Tank;
@@ -40,8 +44,12 @@ public class ServerEngine extends GameEngine{
     public static ServerSocket echoServerSocket;
     private static ServerEngine se_instance = null;
     public static boolean gameReady;
+    private boolean hasAdded;
     
     public static boolean firstPlayer;
+    
+    private ButtonController humanController2;
+    private ArrayList<Sprite> arrSelected2;
     
     public volatile static ArrayList<Client> clients;
     
@@ -53,8 +61,10 @@ public class ServerEngine extends GameEngine{
     public ServerEngine(String mapPath, ICanvasDevice mainview, ICanvasDevice minimap, ICanvasDevice factoryPanel, ISoundDevice sound) {
         super(mapPath, mainview, minimap, factoryPanel, sound);
         gameReady=false;
+        hasAdded =false;
         delSpr = new ArrayList<Sprite>();
         addSpr = new ArrayList<Sprite>();
+        arrSelected2 = new ArrayList<Sprite>();
         se_instance=this;
     }
     
@@ -79,7 +89,6 @@ public class ServerEngine extends GameEngine{
     
     public void initGame(){
         loadGameMap(this.mapPath);
-        gameReady =true;
         Handler.echoMap(arrMapTiles);
         
         Team human1 = this.getPlayerTeam();
@@ -89,10 +98,15 @@ public class ServerEngine extends GameEngine{
         Sprite tank2 = new Tank(human2,200,200,50,50);
         human1.addSprite(tank1);
         human2.addSprite(tank2);
+        
+        humanController = new ServerButtonController(human1, null);
+        humanController2 = new ServerButtonController(human2, null);
         //tank1.setNavigationGoal(new Point(500,500));
         //tank1.setAttackGoal(tank2.getSpriteInfo());
         this.addSprite(tank1);
         this.addSprite(tank2);
+        gameReady =true;
+
     }
     
     @Override
@@ -105,13 +119,40 @@ public class ServerEngine extends GameEngine{
         for(Sprite s : delSpr){
             arrSprites.remove(s);
         }
-        for(Sprite s : addSpr){
-            arrSprites.add(s);
+        if(!hasAdded && addSpr.size()>0){
+            for(Sprite s : addSpr){
+                arrSprites.add(s);
+            }
+            hasAdded=true;
+        }
+        Team winner = this.CheckWinner();
+        if(winner!=null)
+            this.endGame(winner);
+        if(humanController!=null){
+            humanController.onTick();
+            humanController2.onTick();
         }
         delSpr.clear();
-        addSpr.clear();
+        if(hasAdded){
+            addSpr.clear();
+            hasAdded=false;
+        }
         
         Handler.updateSprites(this.arrSprites);
+    }
+    
+    @Override
+    public void endGame(Team winner){
+        if(this.getPlayerTeam().equals(winner)){
+            Handler.gameFinish(this.clients.get(0), "You Won");
+            Handler.gameFinish(this.clients.get(1), "You Lost");
+        }
+        else if(this.getAITeam().equals(winner)){
+            Handler.gameFinish(this.clients.get(1), "You Won");
+            Handler.gameFinish(this.clients.get(0), "You Lost");
+        }
+        this.gameReady=false;
+
     }
     
     private void updateSprite(Sprite s){
@@ -162,6 +203,65 @@ public class ServerEngine extends GameEngine{
     @Override
     public Team getAITeam(){
         return clients.get(1).team;
+    }
+    
+    public void purchaseRequest(Team t, int x, int y){
+        if(t.getName().equals(this.getPlayerTeam().getName()))
+            humanController.onLeftClick(null, x, y);
+        else
+            humanController2.onLeftClick(null, x, y);
+    }
+    
+    public void regionSelect(Team t, int x1, int y1, int x2, int y2){
+        Point p1 = new Point(x1,y1);
+        Point p2 = new Point(x2,y2);
+        
+        if(t.equals(this.getPlayerTeam())){
+            this.arrSelected= this.getArrSprites(p1, p2, this.getPlayerTeam(), true);
+        }
+        else{
+            this.arrSelected2= this.getArrSprites(p1, p2, this.getAITeam(), true);
+
+        }
+    }
+    
+    public void rightClick(Team t, int x, int y){
+        Point pt = new Point(x,y);
+        Point pt1 = new Point(pt.x-25, pt.y-25);
+        Point pt2 = new Point(pt.x+25, pt.y+25);
+        //System.out.println("X: " +x +" Y: " + y);
+        ArrayList<Sprite> targets = this.getArrSprites(pt1, pt2, t, false);
+        Sprite target = targets==null || targets.size()==0? null: targets.get(0);
+        ArrayList<Sprite> sel = t.equals(getPlayerTeam()) ? arrSelected : arrSelected2;
+        //System.out.println("Size: " + sel.size());
+
+        if(target!=null){
+            for(Sprite sprite: sel){
+                sprite.setNavigationGoal(pt);
+                sprite.setAttackGoal(target.getSpriteInfo());
+            }
+        }else{
+            for(Sprite sprite: sel){
+                sprite.setNavigationGoal(pt);
+            }
+        }
+        //this.mouseSprite.handleEvnet(MouseEvent.RightClick, canvas, x, y, this.arrSelected);        
+        //ge_instance  = this;
+        //this.mouseSprite = new MouseSprite(mainview, minimap);
+        //this.mainview.setupEventHandler(this);
+        this.loadGameMap(this.mapPath);
+        //this.aiButtonController = new ButtonController(this.getAITeam(), null); //no display device
+        //this.ai = new AI(this.getAITeam(), this.aiButtonController);
+    }
+    
+    public Team CheckWinner(){
+        for(int i=0; i<=1; i++){
+            Team team = this.clients.get(i).team;
+            if(team.getBase().isDead()){
+                return this.clients.get(1-i).team;
+            }
+        }
+        return null;
     }
     
     public static void registerPlayer(Client client){

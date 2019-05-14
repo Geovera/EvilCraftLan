@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author csc190
  */
-class Handler {
+public class Handler {
     
     private Client client;
     static ArrayJsonConverter converter = new ArrayJsonConverter();
@@ -57,12 +57,27 @@ class Handler {
     private void handleUpdate(){
         try{
             while(true){
-                String cmd = client.dataIn.readLine();        
+                String cmd = client.dataIn.readLine();      
+                cmd = cmd==null?"":cmd;
                 if(cmd.equals(RefStrings.CMD_MADRE)){
                     System.out.println(cmd);
+                }else if(cmd.equals(RefStrings.CMD_BUTTONCLICK)){
+                    int x = client.dataIn.read();
+                    int y = client.dataIn.read();
+                    ServerEngine.getServerInstance().purchaseRequest(client.team, x, y);
+                }else if(cmd.equals(RefStrings.CMD_REGION)){
+                    int x1 = client.dataIn.read();
+                    int y1 = client.dataIn.read();
+                    int x2 = client.dataIn.read();
+                    int y2 = client.dataIn.read();
+                    ServerEngine.getServerInstance().regionSelect(client.team, x1, y1, x2, y2);
+                }else if(cmd.equals(RefStrings.CMD_RIGHTCLICK)){
+                    int x = client.dataIn.read();
+                    int y = client.dataIn.read();
+                    ServerEngine.getServerInstance().rightClick(client.team, x, y);
                 }
             }
-        }catch(Exception e){}
+        }catch(Exception e){e.printStackTrace();}
         finally{
             disconnect();
         }
@@ -125,7 +140,6 @@ class Handler {
     public static void echoMap(ArrayList<StaticObject> map){
         try{
             String json =converter.convertToJson(map, ArrayJsonConverter.ArrayType.STATIC);
-            System.out.println(json);
             for(Client cl : ServerEngine.clients){
                 cl.echoOut.write(RefStrings.CMD_STARTMAP + "\r\n");
                 cl.echoOut.write(json+"\r\n");
@@ -134,6 +148,24 @@ class Handler {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+    
+    public static void purchaseAccept(String teamName, String type, int nowCash){
+        try{
+            Client cl = teamName.equals("Human") ? ServerEngine.clients.get(0) : ServerEngine.clients.get(1);
+            cl.echoOut.write(RefStrings.CMD_PURCHASEACCEPTED+ "\r\n");
+            cl.echoOut.write(nowCash);
+            cl.echoOut.write(type + "\r\n");
+            cl.echoOut.flush();
+        }catch(Exception e){}
+    }
+    
+    public static void gameFinish(Client cl, String won){
+        try{
+            cl.echoOut.write(RefStrings.CMD_GAMEFINISH + "\r\n");
+            cl.echoOut.write(won + "\r\n");
+            cl.echoOut.flush();
+        }catch(Exception e){}
     }
     
     public static void updateSprites(ArrayList<Sprite> arrSprite){
@@ -146,8 +178,8 @@ class Handler {
                 cl.echoOut.flush();
             }
         }catch(Exception e){
-            e.printStackTrace();
-            System.exit(1);
+            //e.printStackTrace();
+            //System.exit(1);
         }
     }
     

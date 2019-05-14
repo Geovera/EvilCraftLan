@@ -31,6 +31,8 @@ public class ButtonController implements IGameEngine{
     protected ArrayList<ShopButton> arrButtons;
     protected Team myteam;
     protected ICanvasDevice canvas;
+    String [] arrTypes = new String [] {ShopButton.INFANTRY, ShopButton.TANK, ShopButton.PLANE};
+
     //---- OPERATIONS --------------------
 
     /**
@@ -45,7 +47,6 @@ public class ButtonController implements IGameEngine{
     public ButtonController(Team team, ICanvasDevice canvas){
         this.myteam = team;
         this.canvas = canvas;
-        String [] arrTypes = new String [] {ShopButton.INFANTRY, ShopButton.TANK, ShopButton.PLANE};
         String basePath = "resources/images/common/";
         String [] paths = new String []{
             basePath + "infantry_btn.png",
@@ -56,6 +57,25 @@ public class ButtonController implements IGameEngine{
         for(int i=0; i<arrTypes.length; i++){
             int y = 100*(i+1);
             ShopButton button = new ShopButton(myteam, arrTypes[i], 100, paths[i], 0, y, 200, 100);
+            this.arrButtons.add(button);
+        }
+        if(this.canvas!=null)
+            this.canvas.setupEventHandler(this);
+    }
+    
+    public ButtonController(Team team, ICanvasDevice canvas, int cool){
+        this.myteam = team;
+        this.canvas = canvas;
+        String basePath = "resources/images/common/";
+        String [] paths = new String []{
+            basePath + "infantry_btn.png",
+            basePath + "tank_btn.png", 
+            basePath + "plane_btn.png"
+        };
+        this.arrButtons = new ArrayList<ShopButton>();
+        for(int i=0; i<arrTypes.length; i++){
+            int y = 100*(i+1);
+            ShopButton button = new ShopButton(myteam, arrTypes[i], cool, paths[i], 0, y, 200, 100);
             this.arrButtons.add(button);
         }
         if(this.canvas!=null)
@@ -73,7 +93,7 @@ public class ButtonController implements IGameEngine{
     @Override
     public void onTick() {
         //1. draw the bank account
-        String sCash = "$" + this.myteam.getCash();
+        String sCash = "$"+this.myteam.getCash();
         this.canvas.drawText(sCash, 10, 0, 20);
         
         //2. draw the buttons
@@ -94,6 +114,7 @@ public class ButtonController implements IGameEngine{
         if(y>=100){
             int idx = y/100-1;
             if(idx>=0 && idx<=2){
+
                 ShopButton btn = this.arrButtons.get(idx);
                 btn.onClick();
             }

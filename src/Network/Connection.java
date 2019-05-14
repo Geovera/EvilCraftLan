@@ -17,6 +17,7 @@
  */
 package Network;
 
+import EvilCraft.GameEngine;
 import EvilCraft.Infantry;
 import EvilCraft.Sprite;
 import EvilCraft.StaticObject;
@@ -109,6 +110,41 @@ public class Connection {
             System.out.println("Couldn't echo Print");
         }
     }
+    
+    public void dataRegion(int x1, int y1, int x2, int y2){
+        try{
+            client.dataOut.write(RefStrings.CMD_REGION + "\r\n");
+            client.dataOut.write(x1);
+            client.dataOut.write(y1);
+            client.dataOut.write(x2);
+            client.dataOut.write(y2);
+            client.dataOut.flush();
+
+        }catch(Exception e){
+            
+        }
+    }
+    
+    public void dataRightClick(int x, int y){
+        try{
+            client.dataOut.write(RefStrings.CMD_RIGHTCLICK + "\r\n");
+            client.dataOut.write(x);
+            client.dataOut.write(y);
+            client.dataOut.flush();
+        }catch(Exception e){}
+    }
+    
+    public void dataButtonClick(int x, int y){
+        try{
+            client.dataOut.write(RefStrings.CMD_BUTTONCLICK + "\r\n");
+            client.dataOut.write(x);
+            client.dataOut.write(y);
+            client.dataOut.flush();
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
     private void echoListen() {
         Thread t = new Thread(new Runnable() {
@@ -117,6 +153,7 @@ public class Connection {
                 try {
                     while (true) {
                         String cmd = client.echoIn.readLine();
+                        cmd = cmd==null? "":cmd;
                         if (cmd.equals(RefStrings.CMD_UPDATESPRITES)) {
                             String json = (client.echoIn.readLine().toString());
                             try{
@@ -124,18 +161,22 @@ public class Connection {
                             ce.changeArrSprite(jt);
                             }catch(Exception e){}
                             
-                        } else if (cmd.equals(RefStrings.CMD_REGISTERPLAYER)) {
+                        }else if (cmd.equals(RefStrings.CMD_REGISTERPLAYER)) {
                             System.out.println("Un boludo entro!");
                         }else if (cmd.equals(RefStrings.CMD_DEREGISTERPLAYER)){
                             System.out.println(client.echoIn.readLine());
                         }else if(cmd.equals(RefStrings.CMD_STARTMAP)){
-                            //System.out.println("yes");
                             String json = (client.echoIn.readLine().toString());
-                            //System.out.println(json);
                             ArrayList<StaticObject> jt = converter.convertToString(json, ArrayJsonConverter.ArrayType.STATIC);
                             ce.changeArrStatic(jt);
                             ce.initGame();
-                            
+                        }else if(cmd.equals(RefStrings.CMD_PURCHASEACCEPTED)){
+                            int cash = client.echoIn.read();
+                            String type = client.echoIn.readLine();
+                            ((ClientEngine)GameEngine.getInstance()).purchaseAccepted(cash,type);
+                        }else if(cmd.equals(RefStrings.CMD_GAMEFINISH)){
+                            String msg = client.echoIn.readLine();
+                            ((ClientEngine)GameEngine.getInstance()).clientGameEnd(msg);
                         }
                     }
                 } catch (Exception e) {

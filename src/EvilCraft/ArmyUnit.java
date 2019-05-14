@@ -129,7 +129,7 @@ public abstract class ArmyUnit extends Sprite {
         Team enemy = ge.getAITeam() == this.team ? ge.getPlayerTeam() : ge.getAITeam();
         Point pt1 = new Point(this.getX() - range, this.getY() - range);
         Point pt2 = new Point(this.getX() + range, this.getY() + range);
-        arr = ge.getArrSprites(pt1, pt2, enemy);
+        arr = ge.getArrSprites(pt1, pt2, enemy, true);
         return arr;
     }
 
