@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public abstract class ArmyUnit extends Sprite {
 
     private int coolTicksNeeded = 0;
+    protected int speed;
 
     public ArmyUnit(Team team, int x, int y, int w, int h, int lifepoints, int altitude, int block_score) {
         super(team, x, y, w, h, lifepoints, altitude, block_score);
@@ -127,8 +128,8 @@ public abstract class ArmyUnit extends Sprite {
         ArrayList<Sprite> arr = null;
         GameEngine ge = GameEngine.getInstance();
         Team enemy = ge.getAITeam() == this.team ? ge.getPlayerTeam() : ge.getAITeam();
-        Point pt1 = new Point(this.getX() - range, this.getY() - range);
-        Point pt2 = new Point(this.getX() + range, this.getY() + range);
+        Point pt1 = new Point(this.getX() + this.getW()/2- range, this.getY()+ this.getH()/2 - range);
+        Point pt2 = new Point(this.getX() + this.getW()/2+ range, this.getY() + this.getH()/2+ range);
         arr = ge.getArrSprites(pt1, pt2, enemy, true);
         return arr;
     }
@@ -159,12 +160,23 @@ public abstract class ArmyUnit extends Sprite {
 
     public void update() {
         myticks++;
+        setFireAction();
         if (myticks % 5 == 0) {
             if (this.navigationGoal != null) {
                 Point goal = this.navigationGoal;
-                int newx = this.getX() < goal.x ? this.getX() + 1 : this.getX() - 1;
-                int newy = this.getY() < goal.y ? this.getY() + 1 : this.getY() - 1;
-                this.setPos(newx, newy);
+                Point me = new Point(this.getX(), this.getY());
+                int _degree = this.getAngle(me, goal);
+                this.degree = _degree +90;
+                int newx =  this.getX() + (int)(speed*Math.cos(Math.toRadians(_degree)));
+                int newy = this.getY() + (int)(speed*Math.sin(Math.toRadians(_degree)));
+                if((int)Math.abs(newx-goal.x)<=speed){
+                    newx = goal.x;
+                }
+                if((int)Math.abs(newy-goal.y)<=speed){
+                    newy = goal.y;
+                }
+                if(GameEngine.getInstance().approveNextMove(this, me, newx, newy))
+                    this.setPos(newx, newy);
             }
         }
         this.explode_ifenabled();

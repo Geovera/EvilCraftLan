@@ -31,6 +31,7 @@ public class Tank extends ArmyUnit {
         String team_name = team == GameEngine.getInstance().getPlayerTeam() ? "team_red" : "team_yellow";
         this.pic = "resources/images/" + team_name + "/tank/body.png";
         gun_pic = "resources/images/" + team_name + "/tank/gun.png";
+        this.speed=5;
         int k = 0;
     }
     public Tank(Team team, int x, int y, int w, int h, String pic, String gun_pic, int degree, int gun_degree) {

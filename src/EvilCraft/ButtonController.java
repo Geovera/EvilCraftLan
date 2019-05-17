@@ -32,6 +32,8 @@ public class ButtonController implements IGameEngine{
     protected Team myteam;
     protected ICanvasDevice canvas;
     String [] arrTypes = new String [] {ShopButton.INFANTRY, ShopButton.TANK, ShopButton.PLANE};
+    static int[] ticks = new int[]{60,300,450};
+
 
     //---- OPERATIONS --------------------
 
@@ -56,7 +58,7 @@ public class ButtonController implements IGameEngine{
         this.arrButtons = new ArrayList<ShopButton>();
         for(int i=0; i<arrTypes.length; i++){
             int y = 100*(i+1);
-            ShopButton button = new ShopButton(myteam, arrTypes[i], 100, paths[i], 0, y, 200, 100);
+            ShopButton button = new ShopButton(myteam, arrTypes[i], ticks[i], paths[i], 0, y, 200, 100);
             this.arrButtons.add(button);
         }
         if(this.canvas!=null)
@@ -75,7 +77,7 @@ public class ButtonController implements IGameEngine{
         this.arrButtons = new ArrayList<ShopButton>();
         for(int i=0; i<arrTypes.length; i++){
             int y = 100*(i+1);
-            ShopButton button = new ShopButton(myteam, arrTypes[i], cool, paths[i], 0, y, 200, 100);
+            ShopButton button = new ShopButton(myteam, arrTypes[i], ticks[i], paths[i], 0, y, 200, 100);
             this.arrButtons.add(button);
         }
         if(this.canvas!=null)

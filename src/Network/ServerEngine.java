@@ -21,6 +21,7 @@ import BridgePattern.ICanvasDevice;
 import BridgePattern.ISoundDevice;
 import EvilCraft.AI;
 import EvilCraft.ArmyUnit;
+import EvilCraft.Base;
 import EvilCraft.ButtonController;
 import EvilCraft.GameEngine;
 import EvilCraft.MouseEvent;
@@ -94,17 +95,26 @@ public class ServerEngine extends GameEngine{
         Team human1 = this.getPlayerTeam();
         Team human2 = this.getAITeam();
         
-        Sprite tank1 = new Tank(human1,100,100,50,50);
+        /*Sprite tank1 = new Tank(human1,100,100,50,50);
         Sprite tank2 = new Tank(human2,200,200,50,50);
         human1.addSprite(tank1);
-        human2.addSprite(tank2);
+        human2.addSprite(tank2);*/
+        
+        Base b1 = new Base(human1,100,100,100,100,null);
+        Base b2 = new Base(human2,800,800,100,100,null);
+        human1.setBase(b1);
+        human2.setBase(b2);
+        this.addSprite(b1);
+        this.addSprite(b2);
+
+
         
         humanController = new ServerButtonController(human1, null);
         humanController2 = new ServerButtonController(human2, null);
         //tank1.setNavigationGoal(new Point(500,500));
         //tank1.setAttackGoal(tank2.getSpriteInfo());
-        this.addSprite(tank1);
-        this.addSprite(tank2);
+        //this.addSprite(tank1);
+        //this.addSprite(tank2);
         gameReady =true;
 
     }
@@ -156,9 +166,6 @@ public class ServerEngine extends GameEngine{
     }
     
     private void updateSprite(Sprite s){
-        if (s instanceof ArmyUnit) {
-                ((ArmyUnit) s).setFireAction();
-            }
             s.update();
     }
     

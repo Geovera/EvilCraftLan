@@ -44,7 +44,7 @@ public class ClientButtonController extends ButtonController{
     public void onTick() {
         //1. draw the bank account
         String sCash = "$" + cash;
-        this.canvas.drawText(sCash, 10, 0, 20);
+        this.canvas.drawText(sCash, 10, 50, 20);
         
         //2. draw the buttons
         for(int i=0; i<this.arrButtons.size(); i++){

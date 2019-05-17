@@ -1,0 +1,5 @@
+resource/images/common/g1.png	"Grass Texture" by surfacecurve licensed CC0. URL: https://opengameart.org/content/grass-textureseamless-2d
+resources/images/team_red/tank/* "Simple 2D Tank" b inyourbus License CC0. URL: https://opengameart.org/content/simple-2d-tank
+resources/images/team_yellow/tank/* "Simple 2D Tank" b inyourbus License CC0. URL: https://opengameart.org/content/simple-2d-tank
+resources/images/common/t1.png "Tree Collection" by Bleed license CC-BY 3.0 URL: https://opengameart.org/content/tree-collection-bleeds-game-art
+resources/images/common/t2.png "Tree Collection" by Bleed license CC-BY 3.0 URL: https://opengameart.org/content/tree-collection-bleeds-game-art

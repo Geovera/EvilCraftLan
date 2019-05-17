@@ -54,11 +54,12 @@ public class ClientEngine extends GameEngine{
     }
     
     public void initGame(){
-        gameReady=true;
         this.map = new Map(mapPath, mainview);
         this.humanController = new ClientButtonController(null,this.buttonCanvas, this.connection);
         this.mainview.setupEventHandler(this);
         this.minimap.setupEventHandler(this);
+        gameReady=true;
+
     }
   
     public void clientGameEnd(String msg){
@@ -83,12 +84,6 @@ public class ClientEngine extends GameEngine{
         
         connection.dataRightClick(pt.x, pt.y);
     }
-    @Override
-    public void onLeftClick(ICanvasDevice canvas, int x, int y) {
-        //System.out.println("X1: " +x + " Y1: " +y);
-        Point p = this.getGlobalCoordinates(mainview, x, y, map);
-        //System.out.println("X2: " +p.x + " Y2: " +p.y);
-    }
     
     @Override
     public void onMouseMoved(ICanvasDevice canvas, int x, int y) {
@@ -102,20 +97,16 @@ public class ClientEngine extends GameEngine{
     public void onTick(){
         if(!gameReady)return;
         //System.out.println(arrMapTiles.size());
-        
-        
-        
-        if(!spritesReady) return;
-        mainview.clear();
-        minimap.clear();
-        
-        arrMapTiles.stream().forEach(elem -> drawSprite(elem));
-        
-        arrSprites.stream().forEach(elem -> drawSprite(elem));
-        
+        buttonCanvas.clear();
         this.humanController.onTick();        
         this.mouseSprite.update();
         this.mouseSprite.drawOnMainView(mainview);
+        if(!spritesReady) return;
+        mainview.clear();
+        minimap.clear();
+        arrMapTiles.stream().forEach(elem -> drawSprite(elem));
+        
+        arrSprites.stream().forEach(elem -> drawSprite(elem));
         
         spritesReady=false;
     }

@@ -30,16 +30,15 @@ public class Airplane extends ArmyUnit {
     public Airplane(Team team, int x, int y, int w, int h) {
         super(team, x, y, w, h, 40, 1, 1);
         String team_name = team == GameEngine.getInstance().getPlayerTeam() ? "team_red" : "team_yellow";
-
         this.pic = "resources/images/" + team_name + "/plane/plane.png";
+        this.speed = 8;
     }
 
 
     @Override
     public void drawOnMainView(ICanvasDevice mainview) {
-        mainview.drawImg(pic, this.getX(), this.getY(), this.getW(), this.getH(), this.degree);
         if (this.pic != null) {
-            mainview.drawImg(this.pic, this.getX(), this.getY(), this.getW(), this.getH(), 0);
+            mainview.drawImg(this.pic, this.getX(), this.getY(), this.getW(), this.getH(), this.degree);
         }
     }
 
@@ -86,6 +85,9 @@ public class Airplane extends ArmyUnit {
         }
         for (int i = 0; i < ar.size(); i++) {
             SpriteInfo si = ar.get(i).getSpriteInfo();
+            if (si.type == SpriteInfo.TYPE.PLANE) {
+                return si;
+            }
             if (si.type == SpriteInfo.TYPE.INFANTRY) {
                 return si;
             }
@@ -96,7 +98,6 @@ public class Airplane extends ArmyUnit {
                 return si;
             }
         }
-
         return null;
     }
 

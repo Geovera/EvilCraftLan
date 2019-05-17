@@ -85,7 +85,11 @@ public class ShopButton {
                 if (this.tickLeft == 1) {
 
                     Base base = this.team.getBase();
-                    Point pt = GameEngine.getInstance().getFreeSpace(base.getX(), base.getY(), 50, 50);
+                    Point pt = GameEngine.getInstance().getFreeSpace(this.team, base.getX(), base.getY(), 100, 100);
+                    if(pt==null){
+                        System.out.println("FUCK ME");
+                        return;
+                    }
                     Sprite sprite = null;
                     if (this.unitName.equals(TANK)) {
                         sprite = new Tank(team, pt.x, pt.y, 50, 50);

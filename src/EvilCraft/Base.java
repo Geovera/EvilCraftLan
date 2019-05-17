@@ -25,6 +25,11 @@ public class Base extends StaticObject{
     
     public Base(Team team, int x, int y, int w, int h, String maptile) {
         super(team, x, y, w, h, maptile, 100);
+        if(team.getName().equals("Human"))
+            this.pic="resources/images/team_red/base/base.png";
+        else
+            this.pic="resources/images/team_yellow/base/base.png";
+
     }
     
 }

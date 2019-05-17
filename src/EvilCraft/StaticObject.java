@@ -26,18 +26,16 @@ import BridgePattern.ICanvasDevice;
 
 public class StaticObject extends Sprite {
     protected transient String tile;
-    protected transient String path;
 
     public StaticObject(Team team, int x, int y, int w, int h, String maptile, int lifepoints) {
         super(team, x, y, w, h, lifepoints, 0, 0);
         this.tile = maptile;
-        this.path = "resources/images/common/" + maptile + ".png";
-        this.pic = this.path;
+        this.pic = "resources/images/common/" + maptile + ".png";
     }
     
     public StaticObject(Team team, int x, int y, int w, int h, String pic){
         super(team, x, y, w, h, 1, 0,0);
-        this.pic = pic;
+        this.pic = "resources/images/common/"+pic + ".png";
     }
 
     @Override
@@ -47,7 +45,9 @@ public class StaticObject extends Sprite {
 
     @Override
     public void drawOnMainView(ICanvasDevice mainview) {
-        mainview.drawImg(this.pic,this.getX(), this.getY(), this.getW(), this.getH(), 0);
+        if(this.pic!=null){
+            mainview.drawImg(this.pic,this.getX(), this.getY(), this.getW(), this.getH(), 0);
+        }
     }
 
     @Override
@@ -55,9 +55,9 @@ public class StaticObject extends Sprite {
 
         int mw = GameEngine.getInstance().map.getNumRows()*100;
         int vw = 200;
-        if(this.team==null);
-        String color = this.team.name.indexOf("Human") >= 0 ? "#FF0000" : "#0000FF";
-        minimap.drawRectangle(this.getX()*200/mw, this.getY()*200/mw, this.getW()*200/mw+1, this.getH()*200/mw+1,color);
+        //if(this.team==null);
+        //String color = this.team.name.indexOf("Human") >= 0 ? "#FF0000" : "#0000FF";
+        minimap.drawImg(this.pic, this.getX()*200/mw, this.getY()*200/mw, this.getW()*200/mw+1, this.getH()*200/mw+1, 0);
     }
 
     @Override

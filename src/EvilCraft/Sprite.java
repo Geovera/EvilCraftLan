@@ -73,6 +73,7 @@ public abstract class Sprite {
      */
     public void setNavigationGoal(Point pt) {
         this.navigationGoal = pt;
+        this.degree = this.getAngle(new Point(this.getX(), this.getY()), pt) +90;
     }
 
     /**
@@ -94,9 +95,9 @@ public abstract class Sprite {
         this.y = y;
     }
 
-    protected float getAngle(Point me, Point target) {
-        float angle = (float) Math.toDegrees(Math.atan2(target.y - me.y, target.x - me.x));
-       angle += 90.0; //cause we use y-axis clockwise
+    protected int getAngle(Point me, Point target) {
+        int angle = (int) Math.toDegrees(Math.atan2(target.y - me.y, target.x - me.x));
+        //angle += 90.0; //cause we use y-axis clockwise
         if (angle < 0) {
             angle += 360;
         }

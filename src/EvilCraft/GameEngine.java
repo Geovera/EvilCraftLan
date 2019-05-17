@@ -73,10 +73,7 @@ public class GameEngine implements IGameEngine {
         this.minimap = minimap;
         this.buttonCanvas = factoryPanel;
         this.soundDevice = soundDevice;
-        //this.loadGameMap(mapPath);
         this.mouseSprite = new MouseSprite(this.mainview, this.minimap);
-        
-        
         //TEMPORARY
         taken = new boolean [20][];
         for(int i=0; i<20; i++){
@@ -98,12 +95,16 @@ public class GameEngine implements IGameEngine {
     public void init() {
         //DON'T KILL THE following line
         //set up the ButtonController
+        this.map = new Map(mapPath,mainview);
+        
         Team t1 = new Team(10000, "Human");
         Team t2 = new Team(10000, "AI");
         this.arrTeams.add(t1);
         this.arrTeams.add(t2);
         loadGameMap(this.mapPath);
         humanController = new ButtonController(this.arrTeams.get(0), this.buttonCanvas);
+        this.aiButtonController = new ButtonController(this.getAITeam(), null); //no display device
+
         //set up the ButtonController        
         this.mainview.setupEventHandler(this);
         this.minimap.setupEventHandler(this);
@@ -119,6 +120,7 @@ public class GameEngine implements IGameEngine {
     @Override
     public void onTick() {
 
+        
         this.mainview.clear();
         this.minimap.clear();
         for(int i=0; i<this.arrMapTiles.size(); i++){
@@ -141,9 +143,6 @@ public class GameEngine implements IGameEngine {
 
         for (int i = 0; i < this.arrSprites.size(); i++) {
             Sprite sp = this.arrSprites.get(i);
-            if (sp instanceof ArmyUnit) {
-                ((ArmyUnit) sp).setFireAction();
-            }
             sp.update();
             sp.drawOnMainView(mainview);
         }
@@ -175,12 +174,6 @@ public class GameEngine implements IGameEngine {
             }
         }
         this.mouseSprite.handleEvnet(MouseEvent.RightClick, canvas, x, y, this.arrSelected);        
-        ge_instance  = this;
-        this.mouseSprite = new MouseSprite(mainview, minimap);
-        this.mainview.setupEventHandler(this);
-        this.loadGameMap(this.mapPath);
-        this.aiButtonController = new ButtonController(this.getAITeam(), null); //no display device
-        this.ai = new AI(this.getAITeam(), this.aiButtonController);
         //DON'T KILL THE ABOVE LINE
     }
 
@@ -216,15 +209,11 @@ public class GameEngine implements IGameEngine {
             for(int j=0; j<map.getNumCols(); j++){
                 String tile = map.getMapTile(i, j);
                 StaticObject so = null;
-                if(tile.equals("b1")){
-                    so = new Base(this.getPlayerTeam(), j*100, i*100, 100, 100, "b1");
-                    this.getPlayerTeam().setBase((Base)so);
-                }else if(tile.equals("b2")){
-                    so = new Base(this.getAITeam(), j*100, i*100, 100, 100, "b2");
-                    this.getAITeam().setBase((Base)so);
+                if(tile!=null){
+                    so = new StaticObject(null, j*100,i*100,100,100,tile);
+                    this.arrMapTiles.add(so);
                 }
-                if(so!=null)
-                    this.arrSprites.add(so);
+
             }
         }
     }
@@ -248,7 +237,7 @@ public class GameEngine implements IGameEngine {
      * @return 
      */
     
-    public Point getFreeSpace(int x, int y, int w, int h){
+    public Point getFreeSpace(Team team,int x, int y, int w, int h){
         for(int i=0; i<20; i++){
             for(int j=0; j<20; j++){
                 if(!taken[i][j]){
@@ -429,10 +418,10 @@ public class GameEngine implements IGameEngine {
      * @param y
      * @return 
      */
-    public boolean approveNextMove(Sprite proposer, Point lefttop_corner, int width, int height){
-        ArrayList<Sprite> arr = this.getArrSprites(lefttop_corner, new Point(lefttop_corner.x+width, lefttop_corner.y+height), null, false);
+    public boolean approveNextMove(Sprite proposer, Point lefttop_corner, int x, int y){
+        ArrayList<Sprite> arr = this.getArrSprites(lefttop_corner, new Point(lefttop_corner.x+proposer.getW(), lefttop_corner.y+proposer.getH()), null, false);
         for(Sprite sp: arr){
-            if(sp!=proposer){
+            if(sp!=proposer && isCollide(x,y, proposer.getW(), proposer.getH(), sp.getX(), sp.getY(),sp.getW(), sp.getH())){
                 if(sp.getAltitude()==proposer.getAltitude()){
                     if(sp.getBlockingScore()>=proposer.getBlockingScore()){
                         return false;

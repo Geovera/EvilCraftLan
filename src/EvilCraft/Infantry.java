@@ -32,6 +32,7 @@ public class Infantry extends ArmyUnit {
             "resources/images/" + team_name + "/soldier/soldier.png"
 
         };
+        this.speed =2;
     }
     public Infantry(Team team, int x, int y, int w, int h, int nose) {
         super(team, x, y, w, h, 20, 0, 0);
